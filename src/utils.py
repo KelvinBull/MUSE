@@ -306,8 +306,9 @@ def read_txt_embeddings(params, source, full_vocab):
     # compute new vocabulary / embeddings
     id2word = {v: k for k, v in word2id.items()}
     dico = Dictionary(id2word, word2id, lang)
-    embeddings = np.concatenate(vectors, 0)
-    embeddings = torch.from_numpy(embeddings).float()
+    embeddings = np.concatenate(vectors, 0)#创建变量embeddings, 这里删除vctors,占用内存
+    del vectors
+    embeddings = torch.from_numpy(embeddings).float()#进行深层拷贝
     embeddings = embeddings.cuda() if (params.cuda and not full_vocab) else embeddings
 
     assert embeddings.size() == (len(dico), params.emb_dim)

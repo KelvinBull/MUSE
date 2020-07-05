@@ -92,6 +92,7 @@ assert params.export in ["", "txt", "pth"]
 
 # build model / trainer / evaluator
 logger = initialize_exp(params)
+#构建模型,
 src_emb, tgt_emb, mapping, discriminator = build_model(params, True)
 trainer = Trainer(src_emb, tgt_emb, mapping, discriminator, params)
 evaluator = Evaluator(trainer)
@@ -112,7 +113,7 @@ if params.adversarial:
         stats = {'DIS_COSTS': []}
 
         for n_iter in range(0, params.epoch_size, params.batch_size):
-
+            
             # discriminator training
             for _ in range(params.dis_steps):
                 trainer.dis_step(stats)

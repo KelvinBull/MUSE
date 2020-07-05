@@ -59,7 +59,7 @@ class Trainer(object):
         bs = self.params.batch_size
         mf = self.params.dis_most_frequent
         assert mf <= min(len(self.src_dico), len(self.tgt_dico))
-        src_ids = torch.LongTensor(bs).random_(len(self.src_dico) if mf == 0 else mf)
+        src_ids = torch.LongTensor(bs).random_(len(self.src_dico) if mf == 0 else mf)#从(0,LEN)中随机选bs个整数
         tgt_ids = torch.LongTensor(bs).random_(len(self.tgt_dico) if mf == 0 else mf)
         if self.params.cuda:
             src_ids = src_ids.cuda()
@@ -71,7 +71,7 @@ class Trainer(object):
         src_emb = self.mapping(Variable(src_emb.data, volatile=volatile))
         tgt_emb = Variable(tgt_emb.data, volatile=volatile)
 
-        # input / target
+        # input(一半是经过mapping后的src_emb, 另一半是tgt_emb) / target
         x = torch.cat([src_emb, tgt_emb], 0)
         y = torch.FloatTensor(2 * bs).zero_()
         y[:bs] = 1 - self.params.dis_smooth
@@ -84,7 +84,7 @@ class Trainer(object):
         """
         Train the discriminator.
         """
-        self.discriminator.train()
+        self.discriminator.train()#让discriminator模型处于train状态中
 
         # loss
         x, y = self.get_dis_xy(volatile=True)

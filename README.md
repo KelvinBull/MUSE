@@ -214,3 +214,15 @@ MUSE is the project at the origin of the work on unsupervised machine translatio
 * [E. Grave, A. Joulin, Q. Berthet - Unsupervised Alignment of Embeddings with Wasserstein Procrustes, 2018](https://arxiv.org/abs/1805.11222)
 
 Contact: [gl@fb.com](mailto:gl@fb.com)  [aconneau@fb.com](mailto:aconneau@fb.com)
+
+
+
+!git clone https://github.com/facebookresearch/MUSE.git
+%cd MUSE
+
+# English fastText Wikipedia embeddings
+!curl -Lo data/wiki.en.vec https://dl.fbaipublicfiles.com/fasttext/vectors-wiki/wiki.en.vec
+# Spanish fastText Wikipedia embeddings
+!curl -Lo data/wiki.es.vec https://dl.fbaipublicfiles.com/fasttext/vectors-wiki/wiki.es.vec
+
+!python unsupervised.py --src_lang en --tgt_lang es --src_emb data/wiki.en.vec --tgt_emb data/wiki.es.vec --n_refinement 5
