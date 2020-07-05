@@ -18,12 +18,16 @@ import numpy as np
 import torch
 from torch import optim
 from logging import getLogger
+from pynvml import *
+nvmlInit()     #初始化
+
 
 from .logger import create_logger
 from .dictionary import Dictionary
 
 
-MAIN_DUMP_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'dumped')
+#MAIN_DUMP_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'dumped')
+MAIN_DUMP_PATH = os.path.join('content/MUSE','dumped')
 
 logger = getLogger()
 
@@ -306,12 +310,18 @@ def read_txt_embeddings(params, source, full_vocab):
     # compute new vocabulary / embeddings
     id2word = {v: k for k, v in word2id.items()}
     dico = Dictionary(id2word, word2id, lang)
+    handle = nvmlDeviceGetHandleByIndex(0)
+    info = nvmlDeviceGetMemoryInfo(handle)
+    print("使用了{0}MB, 还剩余{1}MB".format(info.used/1024/1024, info.free/1024/1024))
     embeddings = np.concatenate(vectors, 0)#创建变量embeddings, 这里删除vctors,占用内存
+    print("Driver: "nvmlSystemGetDriverVersion())  #显示驱动信息
+
     del vectors
     embeddings = torch.from_numpy(embeddings).float()#进行深层拷贝
     embeddings = embeddings.cuda() if (params.cuda and not full_vocab) else embeddings
 
     assert embeddings.size() == (len(dico), params.emb_dim)
+    nvmlShutdown()
     return dico, embeddings
 
 
